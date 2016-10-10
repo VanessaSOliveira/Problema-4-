@@ -16,63 +16,26 @@ import jxl.*;
 
 public class Grafo {
     private Object[][] matrizGrafo;
+    private String[] bairros;
+    //private Lista vertices;
+    
+    public Grafo(Object[][] matrizGrafo){
+        this.matrizGrafo = matrizGrafo;
+        this.bairros=new String[50];
+    }
     
     public Grafo(){
         
     }
-    //Fiz essa parte de adicionar na matriz de duas formas , a q ta aqui em baixo e a q ta como comentario
-    public void addGrafo() throws IOException{
-        try {
-        Workbook workbook = Workbook.getWorkbook(new File("bairros2.xls"));
-            
-            Sheet[] abas = workbook.getSheets();
-            Sheet aba = workbook.getSheet(0);
-            matrizGrafo = new Object[aba.getRows()][aba.getColumns()];
 
-            Cell[] celulaTabela;
-            for(int i = 0; i<matrizGrafo.length; i++){
-                celulaTabela = aba.getRow(i+1);
-                for(int j = 0; j< matrizGrafo[0].length;j++){
-                    matrizGrafo[i][j] = celulaTabela[j].getContents();
-                }
-            }
-        } catch (BiffException ex) {
-           
-        }
-        
-    }/*
-    public void addGrafo() throws IOException, BiffException{
-        try{
-            Workbook workbook = Workbook.getWorkbook(new File("bairros2.xls"));
-            //Sheet[] abas = workbook.getSheets();
-            //Sheet aba = tabela.getSheet(0);
-            
-            Sheet sheet = workbook.getSheet(0);
-            Cell cel;
-            int linhas = sheet.getRows();
-            int colunas = sheet.getColumns();
-            matrizGrafo = new Object[linhas][colunas];
-            
-            for(int i = 0; i < linhas; i++){
-                for(int j= 0; j<colunas;j++){
-                    cel = sheet.getCell(j+1, i+1);
-                    if (cel.getType() == CellType.EMPTY){
-                        matrizGrafo[i][j] = null;
-                    }
-                    else{
-                        matrizGrafo[i][j] = cel.getContents();
-                        
-                        Aresta aresta = new Aresta(i,j);
-                        aresta.inserePeso();
-                    }
-                }
-            }
-            workbook.close();
-        }catch(Exception e) {
+    public void setBairros(String[] bairros) {
+        this.bairros = bairros;
+    }
     
-        }
-    }*/
-    
+    public String getBairros(int idBairro){
+        return bairros[idBairro];;
+    }
+    //só pra testar se a matriz ta gerando
     public  void imprimeGrafo(){
         for (int i = 0; i < matrizGrafo.length; i++) {
 
@@ -81,17 +44,66 @@ public class Grafo {
                 System.out.print(matrizGrafo[i][j] + "\n");
             }
         }
+        
+        for(int i=0;i<50;i++){
+            System.out.println(bairros[i]);
+        }
+    }
+    
+    public static class Vertice{
+        private int idVertice;
+        private String nome;
+        private double menorDistancia;
+        private boolean visitado;
+        private Lista listaArestas;
+        
+        public Vertice(int idVertice){
+            this.idVertice = idVertice;
+        }
+
+        public void insereArestas(Aresta aresta){
+            listaArestas.inserirFinal(aresta);
+        }
+        public Iterador getListaArestas(){
+            return listaArestas.iterador();
+        }
+        
+        public String getNome() {
+            return nome;
+        }
+
+        public double getMenorDistancia() {
+            return menorDistancia;
+        }
+
+        public void setDistancia(double distancia) {
+            this.menorDistancia = distancia;
+        }
+
+        public boolean isVisitado() {
+            return visitado;
+        }
+
+        public void setVisitado(boolean visitado) {
+            this.visitado = visitado;
+        }
+        
+        
+        
+        
     }
     //Olha a aresta pq n sei se é assim msm
-    private class Aresta{
+    public static class Aresta{
         private int origem;
         private int destino;
         private double pesoDistancia;
         private double pesoTempo;
+        private Object[][] matrizGrafoo;
         
-        public Aresta(int origem, int destino){
+        public Aresta(int origem, int destino, Object[][] matrizGrafo){
             this.origem = origem;
             this.destino = destino;
+            this.matrizGrafoo = matrizGrafo;
             
         }
 
@@ -103,7 +115,7 @@ public class Grafo {
             for(int i=0; i<50;i++){
                 for(int j = 0; j<50;j++){
                     if(i==origem && j==destino){
-                        String temp = (String) matrizGrafo[i][j];
+                        String temp = (String) matrizGrafoo[i][j];
                         String[] separa = temp.trim().split(",");
                         String distancia = separa[0];
                         String tempo = separa[1];
@@ -117,6 +129,10 @@ public class Grafo {
 
         public double getPesoTempo() {
             return pesoTempo;
+        }
+        
+        public void setPesoTempo(int tempo){
+            pesoTempo = tempo;
         }
     }
 }
