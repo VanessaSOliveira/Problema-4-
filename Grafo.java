@@ -15,17 +15,13 @@ import jxl.*;
 
 
 public class Grafo {
-    private Object[][] matrizGrafo;
     private String[] bairros;
-    //private Lista vertices;
-    
-    public Grafo(Object[][] matrizGrafo){
-        this.matrizGrafo = matrizGrafo;
-        this.bairros=new String[50];
-    }
+    private double[][] matrizDistancias;
+    private double[][] matrizTempo;
     
     public Grafo(){
-        
+        matrizDistancias = new double[50][50];
+        matrizTempo = new double[50][50];
     }
 
     public void setBairros(String[] bairros) {
@@ -33,15 +29,41 @@ public class Grafo {
     }
     
     public String getBairros(int idBairro){
-        return bairros[idBairro];;
+        return bairros[idBairro];
     }
-    //só pra testar se a matriz ta gerando
+    
+    public void organizaMatrizes(Object[][] matrizGrafo){
+        
+            for(int i=0; i<50;i++){
+                for(int j = 0; j<50;j++){
+                        String temp = (String) matrizGrafo[i][j];
+                        String[] separa = temp.trim().split(",");
+                        if(separa[0]==null&&separa[1]==null){
+                            matrizDistancias[i][j]=0.0;
+                            matrizTempo[i][j]=0.0;
+                        }
+                        else{
+                            String distancia = separa[0];
+                            String tempo = separa[1];
+                            //Essa parte ta bugando n sei pq, o parseDouble é pra transformar em double e a substring é pra pegar só o q ta depois do =
+                            matrizDistancias[i][j] = Double.parseDouble(distancia.substring(distancia.indexOf("=") + 1, distancia.length()));
+                            matrizTempo[i][j] = Double.parseDouble(tempo.substring(tempo.indexOf("=") + 1, tempo.length())); 
+                        }
+                    } 
+                }
+    }
+    //n sei se esse metodo fica aqui ou em aresta  
+    public void alteraTempo(int origem,int destino, double valor){
+        matrizTempo[origem][destino] = valor;
+        matrizTempo[destino][origem] = valor;
+    }
+   
     public  void imprimeGrafo(){
-        for (int i = 0; i < matrizGrafo.length; i++) {
+        for (int i = 0; i < matrizDistancias.length; i++) {
 
-            for (int j = 0; j < matrizGrafo[0].length; j++) {
+            for (int j = 0; j < matrizDistancias[0].length; j++) {
 
-                System.out.print(matrizGrafo[i][j] + "\n");
+                System.out.print(matrizDistancias[i][j] + "\n");
             }
         }
         
@@ -49,69 +71,46 @@ public class Grafo {
             System.out.println(bairros[i]);
         }
     }
-    
-    public static class Vertice{
-        private int idVertice;
-        private String nome;
-        private double menorDistancia;
-        private boolean visitado;
-        private Lista listaArestas;
-        
-        public Vertice(int idVertice){
-            this.idVertice = idVertice;
-        }
-
-        public void insereArestas(Aresta aresta){
-            listaArestas.inserirFinal(aresta);
-        }
-        public Iterador getListaArestas(){
-            return listaArestas.iterador();
-        }
-        
-        public String getNome() {
-            return nome;
-        }
-
-        public double getMenorDistancia() {
-            return menorDistancia;
-        }
-
-        public void setDistancia(double distancia) {
-            this.menorDistancia = distancia;
-        }
-
-        public boolean isVisitado() {
-            return visitado;
-        }
-
-        public void setVisitado(boolean visitado) {
-            this.visitado = visitado;
-        }
-        
-        
-        
-        
-    }
-    //Olha a aresta pq n sei se é assim msm
-    public static class Aresta{
+  
+    //n sei se vai precisar de aresta
+    private class Aresta{
         private int origem;
         private int destino;
-        private double pesoDistancia;
-        private double pesoTempo;
-        private Object[][] matrizGrafoo;
         
         public Aresta(int origem, int destino, Object[][] matrizGrafo){
             this.origem = origem;
-            this.destino = destino;
-            this.matrizGrafoo = matrizGrafo;
-            
+            this.destino = destino; 
+        }
+        
+       /* public void organizaMatrizes(Object[][] matrizGrafo){
+            for(int i=0; i<50;i++){
+                for(int j = 0; j<50;j++){
+                        String temp = (String) matrizGrafo[i][j];
+                        String[] separa = temp.trim().split(",");
+                        String distancia = separa[0];
+                        String tempo = separa[1];
+                        matrizDistancias[i][j] = Double.parseDouble(distancia.substring(distancia.indexOf("=") + 1, distancia.length()));
+                        matrizTempo[i][j] = Double.parseDouble(tempo.substring(tempo.indexOf("=") + 1, tempo.length())); 
+                    }
+                    
+                }
+            }
+        }*/
+    
+        public boolean isAresta(int origem,int destino){
+            if(matrizDistancias[origem][destino]!=0 && matrizTempo[origem][destino]!=0){
+                return true;
+            }
+            else{
+                return false;
+            }
         }
 
-        public double getPesoDistancia() {
-            return pesoDistancia;
+        public double getDistancia(int origem, int destino) {
+            return matrizDistancias[origem][destino];
         }
 
-        public void inserePeso(){
+       /* public void inserePeso(){
             for(int i=0; i<50;i++){
                 for(int j = 0; j<50;j++){
                     if(i==origem && j==destino){
@@ -133,6 +132,6 @@ public class Grafo {
         
         public void setPesoTempo(int tempo){
             pesoTempo = tempo;
-        }
+        }*/
     }
 }
