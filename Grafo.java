@@ -22,14 +22,19 @@ public class Grafo {
     public Grafo(){
         matrizDistancias = new double[50][50];
         matrizTempo = new double[50][50];
+        bairros = new String[50];
     }
 
     public void setBairros(String[] bairros) {
-        this.bairros = bairros;
+            this.bairros = bairros;
     }
     
     public String getBairros(int idBairro){
         return bairros[idBairro];
+    }
+    
+    public boolean isAresta(int x, int y){
+        return matrizTempo[x][y]!=0.0;
     }
     
     public void organizaMatrizes(Object[][] matrizGrafo){
@@ -37,17 +42,18 @@ public class Grafo {
             for(int i=0; i<50;i++){
                 for(int j = 0; j<50;j++){
                         String temp = (String) matrizGrafo[i][j];
-                        String[] separa = temp.trim().split(",");
-                        if(separa[0]==null&&separa[1]==null){
-                            matrizDistancias[i][j]=0.0;
-                            matrizTempo[i][j]=0.0;
-                        }
-                        else{
+                        if(temp!=""){
+                            String[] separa = new String[3];
+                            separa = temp.trim().split(",");
                             String distancia = separa[0];
                             String tempo = separa[1];
                             //Essa parte ta bugando n sei pq, o parseDouble é pra transformar em double e a substring é pra pegar só o q ta depois do =
                             matrizDistancias[i][j] = Double.parseDouble(distancia.substring(distancia.indexOf("=") + 1, distancia.length()));
                             matrizTempo[i][j] = Double.parseDouble(tempo.substring(tempo.indexOf("=") + 1, tempo.length())); 
+                        }
+                        else{
+                            matrizDistancias[i][j]=0.0;
+                            matrizTempo[i][j]=0.0;
                         }
                     } 
                 }

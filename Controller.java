@@ -14,7 +14,7 @@ import jxl.read.biff.BiffException;
 
 public class Controller {
     private Object[][] matrizGrafo;
-    private String[] bairros;
+    private String[] bairros;//n sei se vai precisar
     private Grafo grafo;
     private Double precoQuilometro;//Como inicializar o preço, ou pede pra q sempre o usuario digite antes de escolher o trajeto
     private Lista arestasMenoresTempo;//Seria bom pra retornar as arestas de menor caminho, mas ppodem ser os vertices tbm
@@ -27,6 +27,10 @@ public class Controller {
        bairros = new String[50];
     }
     
+    public boolean isAresta(int x, int y){
+        return matrizGrafo[x][y]!=null;
+    }
+        
     public double getPrecoQuilometro(){
         return precoQuilometro;
     }
@@ -40,7 +44,7 @@ public class Controller {
         return total;
     }
    
-    public void insereNaMatriz(String nomeArquivo) throws IOException{
+    public void insereNaMatriz(String nomeArquivo/*, String[] bairros*/) throws IOException{
         
         try {
             //Pega planilha com todas as abas
@@ -51,20 +55,44 @@ public class Controller {
             Cell celula;
             for(int i = 0; i<matrizGrafo.length; i++){
                 celula = aba.getCell(i+1, 0);
-                bairros[i] = celula.getContents();
+                //this.bairros[i] = celula.getContents();
                 for(int j = 0; j< matrizGrafo.length;j++){
                     celulaTabela = aba.getCell(j+1, i+1);
                     matrizGrafo[i][j] = celulaTabela.getContents();
                 }
             }
             workbook.close();
+            
+            //grafo.setBairros(bairros);
         } catch (BiffException ex) {
            
         }
+        //grafo.setBairros(bairros);
+         //   grafo.setBairros(bairros);
+        
+        //controller.insereNaMatriz("bairros2.xls");
         
     }
+    public String retornaVertice(int indice){
+       return grafo.getBairros(indice);
+    }
+    
     // n sei se o dijkstra retorna o vetor com os vertices ou o valor do tempo minimo
     public String[] dijkstra(int origem, int destino){
+        String[] anterioresMenor = new String[50];
+        int[] visitados = new int[50];
+        double[] distanciasTemp = new double[50]; //Distancia temporaria, provavelmente a distancia dos adjacentes
+        double[] distanciasPerm = new double[50];//Distancia final
+        
+        for(int i=0;i<50;i++){
+            distanciasTemp[i] = Double.MAX_VALUE;
+            distanciasPerm[i] = Double.MAX_VALUE;
+            visitados[i]=0;
+        }
+        distanciasTemp[origem] = 0;
+        distanciasPerm[origem] = 0;
+        
+        
         return null;
     }
     
@@ -96,6 +124,15 @@ public class Controller {
     public void imprimeMatriz(){
         grafo = new Grafo();
         grafo.organizaMatrizes(matrizGrafo);
-        grafo.imprimeGrafo();
+       
+        //public  void imprimeGrafo(){
+        for (int i = 0; i < matrizGrafo.length; i++) {
+
+            for (int j = 0; j < matrizGrafo.length; j++) {
+
+                System.out.print(matrizGrafo[i][j] + "\n");
+            }
+        }
+       // grafo.imprimeGrafo();
     }
 }
