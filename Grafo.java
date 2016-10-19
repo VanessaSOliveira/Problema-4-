@@ -4,6 +4,7 @@ public class Grafo {
     private String[] bairros;
     private double[][] matrizDistancias;
     private double[][] matrizTempo;
+    private double tempoTotal;
     //private Lista vertices;
     
     public Grafo(){
@@ -12,30 +13,36 @@ public class Grafo {
         matrizTempo = new double[50][50];
     }
     
-    public int[] dijkstra(int origem, int destino){
-        int[] anteriores = new int[50];
+    public double retornoDistanciaMatriz(int i,int j){
+        return matrizDistancias[i][j];
+    }
+    //depois colocar caminho como lista e depois transformar em array pra n ficar cheio de zeros
+    public ILista dijkstra(int origem, int destino){
+        ILista anteriores = new Lista();
         int[] visitados = new int[50];
         double[] tempo = new double[500];
-        int[] caminho = new int[50];
+        ILista caminho = new Lista();
         
         for(int i=0;i<500;i++){
             tempo[i]=Double.MAX_VALUE;//inicializa as variaveis
         }
-        anteriores[origem]=origem;
+        anteriores.inserirInicio(origem);
+        //anteriores[origem]=origem;
         tempo[origem]=0.0;
         
         int atual = origem;
         int i = 0;
         while(atual!=destino){
             visitados[i]=atual;
-
+            
             int[] adjacentes = retornaAdjacentes(atual);
             for(int adj:adjacentes){
-                if(!contains(visitados, adj)){
+                if(!contains(visitados, adj)){//antes era negado !
                     double soma =tempo[atual]+matrizTempo[atual][adj];
                     if(soma<tempo[adj]){
                         tempo[adj] = soma;
-                        anteriores[adj]=atual;
+                        anteriores.inserirFinal(atual);
+                        //anteriores[adj]=atual;
                     }
                 }
             }
@@ -51,14 +58,16 @@ public class Grafo {
             i++;
         }
         
-        double tempoTotal = tempo[destino];
+        tempoTotal = tempo[destino];
         i=0;
+        atual = destino;
         while(true){
-            caminho[i] = atual;
+            caminho.inserirFinal(atual);
             if(atual==origem){
                 break;
-            }            
-            atual = anteriores[atual];
+            }
+            atual = (int) anteriores.recuperar(atual);
+            //atual = anteriores[atual];
             i++;
         }
         
@@ -120,8 +129,8 @@ public class Grafo {
     public double getDistancia(int origem, int destino) {
         return matrizDistancias[origem][destino];
     }
-    public double getTempo(int origem, int destino){
-        return matrizTempo[origem][destino];
+    public double getTempo(){
+        return tempoTotal;
     }
     //so pra testar
     public  void imprimeGrafo(){

@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.Scanner;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
@@ -103,7 +104,7 @@ public class Papalegua extends javax.swing.JFrame {
    
             
            // controller.insereNaMatriz("bairros2.xls");//antes era só o arquivo os bairros n
-            graphComponent.getViewport().setOpaque(false);//sobrepôs o grafo
+        graphComponent.getViewport().setOpaque(false);//sobrepôs o grafo
         graph.getModel().endUpdate();
         //graph.setCellsMovable(false);
         graph.setCellsEditable(false);
@@ -128,13 +129,13 @@ public class Papalegua extends javax.swing.JFrame {
                     Object retorno = graphComponent.getCellAt(e.getX(), e.getY());
                     if(retorno!=null){
                         for(int i=0;i<50;i++){
-                            if(vertices[i]==retorno){
-                                if(origemDestino[0]==0){
+                            if(vertices[i]==retorno){//verificar qual foi selecionado
+                                if(origemDestino[0]==0){//se a origem não tiver origem
                                     origemDestino[0]=i;
                                     break;
                                 }
                                 else{
-                                    origemDestino[1]=i;
+                                    origemDestino[1]=i;//se tiver origem adiciona no destino
                                     break;
                                 }
                             }
@@ -152,6 +153,8 @@ public class Papalegua extends javax.swing.JFrame {
         else{
         ir.setEnabled(true);
         }*/
+      // JList legenda = new JList();
+       //legenda.
         setLocationRelativeTo(null);
         
     }
@@ -170,10 +173,12 @@ public class Papalegua extends javax.swing.JFrame {
         alterarPreco = new javax.swing.JButton();
         alterarTempo = new javax.swing.JButton();
         historico = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextPane1 = new javax.swing.JTextPane();
         mapa = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        desfazer = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList<>();
+        jLabel2 = new javax.swing.JLabel();
 
         jButton1.setText("jButton1");
 
@@ -212,32 +217,53 @@ public class Papalegua extends javax.swing.JFrame {
             }
         });
 
-        jScrollPane1.setViewportView(jTextPane1);
-
         mapa.setIcon(new javax.swing.ImageIcon("C:\\Users\\Cliente\\Documents\\Vanessa\\UEFS\\IIº SEMESTRE\\MI PROGRAMAÇÃO\\PROBLEMA 4\\Problema 4\\mapaSalvador.jpeg")); // NOI18N
 
         jLabel1.setIcon(new javax.swing.ImageIcon("C:\\Users\\Cliente\\Documents\\Vanessa\\UEFS\\IIº SEMESTRE\\MI PROGRAMAÇÃO\\PROBLEMA 4\\Problema 4\\papa1.jpg")); // NOI18N
+
+        desfazer.setText("Desfazer");
+        desfazer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                desfazerActionPerformed(evt);
+            }
+        });
+
+        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+            public int getSize() { return bairros.length; }
+            public String getElementAt(int i) { return (i+1)+". "+bairros[i]; }
+        });
+        jScrollPane2.setViewportView(jList1);
+
+        jLabel2.setText("Legenda dos Bairros ");
 
         jLayeredPane1.setLayer(ir, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane1.setLayer(alterarPreco, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane1.setLayer(alterarTempo, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane1.setLayer(historico, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jLayeredPane1.setLayer(jScrollPane1, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane1.setLayer(mapa, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane1.setLayer(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(desfazer, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(jScrollPane2, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(jLabel2, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout jLayeredPane1Layout = new javax.swing.GroupLayout(jLayeredPane1);
         jLayeredPane1.setLayout(jLayeredPane1Layout);
         jLayeredPane1Layout.setHorizontalGroup(
             jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jLayeredPane1Layout.createSequentialGroup()
-                .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(historico, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
                         .addComponent(alterarTempo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(alterarPreco, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(ir, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(ir, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(desfazer, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE))
+                    .addGroup(jLayeredPane1Layout.createSequentialGroup()
+                        .addGap(96, 96, 96)
+                        .addComponent(jLabel2))
+                    .addGroup(jLayeredPane1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(10, 10, 10)
                 .addComponent(mapa)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -255,9 +281,13 @@ public class Papalegua extends javax.swing.JFrame {
                 .addComponent(alterarTempo, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(historico, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(1913, 1913, 1913))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(desfazer, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 436, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(1570, 1570, 1570))
             .addGroup(jLayeredPane1Layout.createSequentialGroup()
                 .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(mapa)
@@ -289,71 +319,47 @@ public class Papalegua extends javax.swing.JFrame {
 
 //Botao alterar tempo
     private void alterarTempoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alterarTempoActionPerformed
-        JDialogTempo jDialogTemp = new JDialogTempo(this,true);
-        jDialogTemp.setLocationRelativeTo(null);
-        jDialogTemp.setTitle("Alteração de Tempo do percurso");
-        Dimension d = new Dimension();
-        d.setSize(250, 130);
-        jDialogTemp.setMinimumSize(d);
-        jDialogTemp.setVisible(true);
-        //getContentPane().add(jDialog);
-        //pega a origem do combobox, o indice e o destino e envia para o controller no metodo se sao adjacentes, se sim altera
-        //falta editar
-        String retorno = jDialogTemp.valorDigitadoTempo();
-        double valor = Double.parseDouble(retorno);
-        //controller.alteraTempo(origem, destino, valor);//oorigem e destino correspondente ao combobox
+        Object[] obj = new String[500];
+        for(int i = 0; i<500; i++){
+            for(int j=i+1; j<50; j++){
+                //if(controller.isAresta(i, j)){
+                if(controller.isAresta(i, j)&&controller.isAresta(j, i)){
+                    obj[i]= controller.getBairros(i) + " -- " + controller.getBairros(j);
+                }
+            }
+        }
+        Object retorno = JOptionPane.showInputDialog(null, "Selecione um caminho:","Alteração do Tempo",JOptionPane.INFORMATION_MESSAGE, null,obj,obj[0]);
+        /*Object selectedValue = JOptionPane.showInputDialog(null,"Caminho:", "Selecione o caminho:",
+        JOptionPane.INFORMATION_MESSAGE, null, obj, obj[0]);	
+        Object[] opcoes = {"Um","Dois","Tres","Quatro"};
+Object res = JOptionPane.showInputDialog(null, "Escolha um item" , "Selecao de itens" ,
+				JOptionPane.PLAIN_MESSAGE , null ,opcoes,"");*/
     }//GEN-LAST:event_alterarTempoActionPerformed
 
 //botao edita preço
     private void alterarPrecoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alterarPrecoActionPerformed
-        //Parte anterior com jinternalframe
-        /*TelaEdicao editaPreco = new TelaEdicao();
-        editaPreco.setTitle("Alteração de Preço");
-        getContentPane().add(editaPreco);
-        editaPreco.setVisible(true);
-        String retorno = editaPreco.getJTextField();
-        double valor = Double.parseDouble(retorno);
-        controller.setPrecoQuilometro(valor);*/
-        
-        //Com JDialog
-        NovoJDialog jDialog = new NovoJDialog(this,true);
-        jDialog.setLocationRelativeTo(null);
-        jDialog.setTitle("Alteração de Preço");
-        Dimension d = new Dimension();
-        d.setSize(250, 130);
-        jDialog.setMinimumSize(d);
-        jDialog.setVisible(true);
-        //getContentPane().add(jDialog);
-        String retorno = jDialog.valorDigitado();
-        double valor = Double.parseDouble(retorno);
+        double valor =Double.parseDouble(JOptionPane.showInputDialog("Digite o novo preço para o quilômetro rodado:"));
         controller.setPrecoQuilometro(valor);
-        
-
-        //  controller.setPrecoQuilometro(Double.parseDouble(retorno.trim()));
-        //String str = editaPreco.getJTextField();
-
-        //controller.setPrecoQuilometro(str);
-
-        // ;
-
-        // TODO add your handling code here:
     }//GEN-LAST:event_alterarPrecoActionPerformed
 
     private void irActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irActionPerformed
         //corrigir pq ta meio bugado
         
         int[] caminhoMinimo=controller.retonaMenorCaminho(origemDestino[0], origemDestino[1]);
-        for(int i=0;i<50;i++){
-            for(int j=i+1;j<50;j++){
+        
+        for(int i=0;i<vertices.length-1 && i<caminhoMinimo.length-1;i++){
+            //for(int j=i+1;j<caminhoMinimo.length;j++){
                 if(caminhoMinimo!=null){
-                    if(caminhoMinimo[i]!=0){
-                        graph.insertEdge(null, null, "", vertices[i], vertices[j]);
-                    }
+                    //if(caminhoMinimo[i]!=0){
+                        graph.insertEdge(null, null, "", vertices[caminhoMinimo[i+1]], vertices[caminhoMinimo[i]]);
+                    //}
                 }
-            }
+            //}
         }
-        JOptionPane.showMessageDialog(null, "Valor da Corrida: " + controller.retornaValorTotalCorrida()+"\n"+ "Distancia: "
-                + controller.retornaValorDistancia(origemDestino[0], origemDestino[1])+"\n"+ "Tempo de percurso: "+ controller.retornaTempoTotal());
+        JOptionPane.showMessageDialog(null,
+                    "Distancia: " + controller.retornaValorDistancia(origemDestino[0], origemDestino[1])+ " Km" + "\n"+ 
+                    "Tempo de percurso: "+ controller.retornaTempoTotal() + " min"+"\n" +
+                    "Valor da Corrida: R$ " + controller.retornaValorTotalCorrida(),"Resultado",JOptionPane.INFORMATION_MESSAGE );
 
     }//GEN-LAST:event_irActionPerformed
 
@@ -361,6 +367,23 @@ public class Papalegua extends javax.swing.JFrame {
         
         
     }//GEN-LAST:event_formMouseClicked
+
+    private void desfazerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_desfazerActionPerformed
+       
+        int[] caminhoMinimo=controller.retonaMenorCaminho(origemDestino[0], origemDestino[1]);
+        Object[] obj = new Object[caminhoMinimo.length];
+        for(int i=0;i<50;i++){
+            for(int j=i+1;j<50;j++){
+                if(caminhoMinimo!=null){
+                    //if(caminhoMinimo[i]!=0){
+                        obj = graph.getEdgesBetween(vertices[i], vertices[j]);
+                    //}
+                }
+            }
+        }
+        graph.resetEdges(obj);
+        graph.refresh();
+    }//GEN-LAST:event_desfazerActionPerformed
 
 //Botao alterar preço//Botao histórico
 
@@ -409,13 +432,15 @@ public class Papalegua extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton alterarPreco;
     private javax.swing.JButton alterarTempo;
+    private javax.swing.JButton desfazer;
     private javax.swing.JButton historico;
     private javax.swing.JButton ir;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLayeredPane jLayeredPane1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextPane jTextPane1;
+    private javax.swing.JList<String> jList1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel mapa;
     // End of variables declaration//GEN-END:variables
 }
