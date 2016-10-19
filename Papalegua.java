@@ -5,12 +5,15 @@ import Controller.Controller;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 /**
@@ -21,11 +24,13 @@ public class Papalegua extends javax.swing.JFrame {
     private mxGraph graph;
     private mxGraphComponent graphComponent;
     private JTextField texto;
-    private JButton botaoAdd;
+   // private JButton botaoAdd;
     private Controller controller;
     private Object[] vertices;
     private String[] bairros;
-    private MouseListener mouse;
+   // private MouseListener mouse;
+    private MouseEvent eventoMouse;
+    private int[] origemDestino;
 
     public Papalegua() throws IOException{
         super("Papalégua");
@@ -34,6 +39,7 @@ public class Papalegua extends javax.swing.JFrame {
         
         vertices = new Object[50];
         bairros = new String[50];
+        origemDestino = new int[2];
         //inicializa();//ideia
         
         //setLocationRelativeTo(null);
@@ -103,16 +109,55 @@ public class Papalegua extends javax.swing.JFrame {
         graph.setCellsEditable(false);
         graph.setCellsLocked(true);
         graph.setCellsSelectable(true);
+       
         getContentPane().add(graphComponent);
         initComponents();
-        
         
         ImageIcon icone = new ImageIcon("papaleguas.png");
         setIconImage(icone.getImage());
         
+        //setLocationRelativeTo(null);
+        //ir.setEnabled(false);
+        //graphComponent.addMouseListener(mouse);
+        //Object vetor =graphComponent.addMouseListener(mouse);
+      //  graphComponent.getGraphControl().addMouseListener((MouseListener) eventoMouse);
+        graphComponent.getGraphControl().addMouseListener(new MouseAdapter(){
+            //private int[] origemDestino = new int[2];
+           // private int indice;
+                public void mousePressed(MouseEvent e){
+                    Object retorno = graphComponent.getCellAt(e.getX(), e.getY());
+                    if(retorno!=null){
+                        for(int i=0;i<50;i++){
+                            if(vertices[i]==retorno){
+                                if(origemDestino[0]==0){
+                                    origemDestino[0]=i;
+                                    break;
+                                }
+                                else{
+                                    origemDestino[1]=i;
+                                    break;
+                                }
+                            }
+                        } 
+                    }
+                    //so pra testar
+                    for(Object o:origemDestino){
+                        System.out.println(o);
+                    }
+                }
+            });
+       /* if(origemDestino[0]==0||origemDestino[1]==0){
+            ir.setEnabled(false);
+        }
+        else{
+        ir.setEnabled(true);
+        }*/
         setLocationRelativeTo(null);
-        graphComponent.addMouseListener(mouse);
         
+    }
+    public void mostraCaminho(){
+        //Pega o lugar onde a pessoa clicou no mapa como origem e destino e passa pro dijkstra
+        //depois pega o retorno do dijkstra
     }
 
     @SuppressWarnings("unchecked")
@@ -253,6 +298,7 @@ public class Papalegua extends javax.swing.JFrame {
         jDialogTemp.setVisible(true);
         //getContentPane().add(jDialog);
         //pega a origem do combobox, o indice e o destino e envia para o controller no metodo se sao adjacentes, se sim altera
+        //falta editar
         String retorno = jDialogTemp.valorDigitadoTempo();
         double valor = Double.parseDouble(retorno);
         //controller.alteraTempo(origem, destino, valor);//oorigem e destino correspondente ao combobox
@@ -294,7 +340,21 @@ public class Papalegua extends javax.swing.JFrame {
     }//GEN-LAST:event_alterarPrecoActionPerformed
 
     private void irActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irActionPerformed
-        // TODO add your handling code here:
+        //corrigir pq ta meio bugado
+        
+        int[] caminhoMinimo=controller.retonaMenorCaminho(origemDestino[0], origemDestino[1]);
+        for(int i=0;i<50;i++){
+            for(int j=i+1;j<50;j++){
+                if(caminhoMinimo!=null){
+                    if(caminhoMinimo[i]!=0){
+                        graph.insertEdge(null, null, "", vertices[i], vertices[j]);
+                    }
+                }
+            }
+        }
+        JOptionPane.showMessageDialog(null, "Valor da Corrida: " + controller.retornaValorTotalCorrida()+"\n"+ "Distancia: "
+                + controller.retornaValorDistancia(origemDestino[0], origemDestino[1])+"\n"+ "Tempo de percurso: "+ controller.retornaTempoTotal());
+
     }//GEN-LAST:event_irActionPerformed
 
     private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked

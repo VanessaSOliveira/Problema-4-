@@ -36,9 +36,24 @@ public class Controller {
         precoQuilometro = valor;
     }
     //retorna valor da corrida
-    public double valorTotalCorrida(){
+    public double retornaValorTotalCorrida(){
         double total;
         total = distanciaDoMenorTempo * precoQuilometro;
+        return total;
+    }
+    
+    public double retornaTempoTotal(){
+        return grafo.getTempo();
+    }
+    //verifica pq acho q ta errado//tem q colocar no dijkstra e depois adicionar a um atributo e ter um get pra retornar
+    public double retornaValorDistancia(int origem,int destino){
+        double total=0;
+        int[] vertices = grafo.dijkstra(origem, destino);
+        for(int i=0;i<50;i++){
+            for(int j=i+1;j<50;j++){
+                total+= grafo.retornoDistanciaMatriz(vertices[i],vertices[j]);
+            }
+        }
         return total;
     }
       
