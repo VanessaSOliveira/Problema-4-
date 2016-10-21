@@ -1,74 +1,93 @@
-
+/**
+ * Componente Curricular: Módulo Integrado de Programação
+ * Autor: Emille Victória Sampaio Guedes e Vanessa de Souza de Oliveira
+ * Data:  20/10/2016
+ *
+ * Declaro que este código foi elaborado por mim de forma individual e
+ * não contém nenhum trecho de código de outro colega ou de outro autor, 
+ * tais como provindos de livros e apostilas, e páginas ou documentos 
+ * eletrônicos da Internet. Qualquer trecho de código de outra autoria que
+ * uma citação para o  não a minha está destacado com  autor e a fonte do
+ * código, e estou ciente que estes trechos não serão considerados para fins
+ * de avaliação. Alguns trechos do código podem coincidir com de outros
+ * colegas pois estes foram discutidos em sessões tutorias.
+ */
 package View;
 
 import Controller.Controller;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
-import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 
-/**
- *
- * @author Cliente
- */
+/*Essa classe implementa os métodos da view(Papalegua).
+    Possui os atributos do mxGraph, mxGraphComponent, controller, vetor de
+    object para os vertices, vetor de string para bairros, vetor de inteiros
+    para a origem e destino e um vetor de object para as arestas. Além disso,
+    possui os métodos de gerar grafo na tela, clique na tela, e os métodos dos
+    eventos dos botões da interface gráfica.
+    */
 public class Papalegua extends javax.swing.JFrame {
     private mxGraph graph;
     private mxGraphComponent graphComponent;
-    private JTextField texto;
-   // private JButton botaoAdd;
     private Controller controller;
     private Object[] vertices;
     private String[] bairros;
-   // private MouseListener mouse;
-    private MouseEvent eventoMouse;
     private int[] origemDestino;
+    private Object[] arestas;
 
+/*No construtor ele inicializa os atributos do Papalegua, chama o método para
+    gerar a matriz a partir do excel, chama os métodos de gerar o grafo na tela,
+    do clique na tela e detalhes da interface, como o icone e o nome da
+    aplicação.
+    */
     public Papalegua() throws IOException{
         super("Papalégua");
         controller = new Controller();
         controller.insereNaMatriz("bairros2.xls");
         
         vertices = new Object[50];
+        arestas = new Object[50];
         bairros = new String[50];
         origemDestino = new int[2];
-        //inicializa();//ideia
-        
-        //setLocationRelativeTo(null);
-        
         graph = new mxGraph();
+        graphComponent = new mxGraphComponent(graph);  
+        
+        //gerar grafo
+        gerarGrafoNaTela();
+        initComponents();
+        
+        ImageIcon icone = new ImageIcon("papaleguas.png");
+        setIconImage(icone.getImage());
+        //clique do mouse
+        cliqueNaTela();
+        setLocationRelativeTo(null);
+    }
+    
+    
+    /*Esse método implementa a geração de grafo na tela.
+    Inicialmente ele referencia um pai default para o vértice. Depois disso ele
+    altera o tamanho do graphComponent e inicializa o modelo do graph. Ao
+    inicializar, ele lê um arquivo com as coordenadas de todos os pontos a serem
+    adicionados na tela. Ele percorre todas as linhas do arquivo, separa o y e
+    x, salvando em uma variável e cria um vértice de acordo com aquela variável.
+    Depois disso, ele define o fundo do grafo para ficar transparente e permitir
+    a exibição do mapa, também ele faz com que os vértices fiquem fixos na tela 
+    e que possam ser selecionados.
+    */
+    private void gerarGrafoNaTela() throws FileNotFoundException{
         Object parent = graph.getDefaultParent();
-        mxGraphComponent graphComponent = new mxGraphComponent(graph);  
+        
         graphComponent.setBounds(309,0,753,720);
         
-        //graphComponent.setBackground(Color.TRANSPARENT);
-        //graphComponent.setImportEnabled(true);
-        //310965   650  //499   748
-       // mxGraph.setCellStyle ("ROUNDED", "vertices");
         graph.getModel().beginUpdate();
-            //adicionaCoordenadas(); //ideia
-           /* for(int i=0;i<50;i++){
-                vertices[i]=graph.insertVertex(parent, null, controller.retornaVertice(i),coordenadasX[i] , coordenadasY[i],
-                    80, 30);
-                       // controller.retornaVertice(i);
-            }*/
-            /*Object v1 = graph.insertVertex(parent, null, "Aguas_Claras", 20, 20, 80,
-                    30,";strokeColor=red; fillColor=red");*/
-           /* vertices[0]=graph.insertVertex(parent, null, "Aguas_Claras", 284.50, 325.50, 80,
-                    30,"ROUNDED;strokeColor=red; fillColor=red");
-            vertices[1] = graph.insertVertex(parent, null, "Massaranduba",70 , 95,
-                    80, 30);
-            graph.insertEdge(parent, null, "Caminho", vertices[0], vertices[1]);*/
-           
+
             int x;
             int y;
             String nome;
@@ -89,48 +108,33 @@ public class Papalegua extends javax.swing.JFrame {
                     bairros[i] = nome;
                 }
             }
-            //controller.setBairros(bairros);
-            //scanner.close();
-            
-            /*for(int i=0;i<50;i++){
-                for(int j=i+1;j<50;j++){
-                    boolean testa = controller.isAresta(i, j);
-                    if(testa==true){
-                        graph.insertEdge(parent, null, "", vertices[i], vertices[j]);
-                    }
-                }
-            }*/
-            
-   
-            
-           // controller.insereNaMatriz("bairros2.xls");//antes era só o arquivo os bairros n
-        graphComponent.getViewport().setOpaque(false);//sobrepôs o grafo
         graph.getModel().endUpdate();
-        //graph.setCellsMovable(false);
+        graphComponent.getViewport().setOpaque(false);
         graph.setCellsEditable(false);
         graph.setCellsLocked(true);
         graph.setCellsSelectable(true);
        
         getContentPane().add(graphComponent);
-        initComponents();
-        
-        ImageIcon icone = new ImageIcon("papaleguas.png");
-        setIconImage(icone.getImage());
-        
-        //setLocationRelativeTo(null);
-        //ir.setEnabled(false);
-        //graphComponent.addMouseListener(mouse);
-        //Object vetor =graphComponent.addMouseListener(mouse);
-      //  graphComponent.getGraphControl().addMouseListener((MouseListener) eventoMouse);
+    }
+/*Esse método implementa o clique na tela.
+    Inicialmente ele "zera" o vetor de origem atribuindo às duas posições o valor
+    máximo do inteiro. Depois disso ele cria uma classe interna passando-a para
+    o graphComponent adicionando o Mouse Listener. Essa classe interna recebe o
+    evento do mouse e guarda o vértice que foi clicado e verifica, caso não tenha
+    uma origem ainda, ele adiciona na origem, caso ja tenha, sempre vai alterar
+    o destino, caso seja clicado em mais de um vértice.
+    */
+    private void cliqueNaTela(){
+        origemDestino[0] = Integer.MAX_VALUE;
+        origemDestino[1] = Integer.MAX_VALUE;
         graphComponent.getGraphControl().addMouseListener(new MouseAdapter(){
-            //private int[] origemDestino = new int[2];
-           // private int indice;
+
                 public void mousePressed(MouseEvent e){
                     Object retorno = graphComponent.getCellAt(e.getX(), e.getY());
                     if(retorno!=null){
                         for(int i=0;i<50;i++){
                             if(vertices[i]==retorno){//verificar qual foi selecionado
-                                if(origemDestino[0]==0){//se a origem não tiver origem
+                                if(origemDestino[0]==Integer.MAX_VALUE){//se a origem não tiver origem
                                     origemDestino[0]=i;
                                     break;
                                 }
@@ -141,28 +145,10 @@ public class Papalegua extends javax.swing.JFrame {
                             }
                         } 
                     }
-                    //so pra testar
-                    for(Object o:origemDestino){
-                        System.out.println(o);
-                    }
                 }
             });
-       /* if(origemDestino[0]==0||origemDestino[1]==0){
-            ir.setEnabled(false);
-        }
-        else{
-        ir.setEnabled(true);
-        }*/
-      // JList legenda = new JList();
-       //legenda.
-        setLocationRelativeTo(null);
-        
     }
-    public void mostraCaminho(){
-        //Pega o lugar onde a pessoa clicou no mapa como origem e destino e passa pro dijkstra
-        //depois pega o retorno do dijkstra
-    }
-
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -172,10 +158,9 @@ public class Papalegua extends javax.swing.JFrame {
         ir = new javax.swing.JButton();
         alterarPreco = new javax.swing.JButton();
         alterarTempo = new javax.swing.JButton();
-        historico = new javax.swing.JButton();
         mapa = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        desfazer = new javax.swing.JButton();
+        resetar = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList<>();
         jLabel2 = new javax.swing.JLabel();
@@ -183,11 +168,6 @@ public class Papalegua extends javax.swing.JFrame {
         jButton1.setText("jButton1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                formMouseClicked(evt);
-            }
-        });
 
         ir.setText("Ir");
         ir.addActionListener(new java.awt.event.ActionListener() {
@@ -210,21 +190,14 @@ public class Papalegua extends javax.swing.JFrame {
             }
         });
 
-        historico.setText("Histórico de Corridas");
-        historico.addActionListener(new java.awt.event.ActionListener() {
+        mapa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/View/mapaSalvador.jpeg"))); // NOI18N
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/View/papa1.jpg"))); // NOI18N
+
+        resetar.setText("Resetar Caminhos");
+        resetar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                historicoActionPerformed(evt);
-            }
-        });
-
-        mapa.setIcon(new javax.swing.ImageIcon("C:\\Users\\Cliente\\Documents\\Vanessa\\UEFS\\IIº SEMESTRE\\MI PROGRAMAÇÃO\\PROBLEMA 4\\Problema 4\\mapaSalvador.jpeg")); // NOI18N
-
-        jLabel1.setIcon(new javax.swing.ImageIcon("C:\\Users\\Cliente\\Documents\\Vanessa\\UEFS\\IIº SEMESTRE\\MI PROGRAMAÇÃO\\PROBLEMA 4\\Problema 4\\papa1.jpg")); // NOI18N
-
-        desfazer.setText("Desfazer");
-        desfazer.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                desfazerActionPerformed(evt);
+                resetarActionPerformed(evt);
             }
         });
 
@@ -239,10 +212,9 @@ public class Papalegua extends javax.swing.JFrame {
         jLayeredPane1.setLayer(ir, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane1.setLayer(alterarPreco, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane1.setLayer(alterarTempo, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jLayeredPane1.setLayer(historico, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane1.setLayer(mapa, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane1.setLayer(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jLayeredPane1.setLayer(desfazer, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(resetar, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane1.setLayer(jScrollPane2, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane1.setLayer(jLabel2, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -253,13 +225,12 @@ public class Papalegua extends javax.swing.JFrame {
             .addGroup(jLayeredPane1Layout.createSequentialGroup()
                 .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(historico, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
                         .addComponent(alterarTempo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(alterarPreco, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(ir, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(desfazer, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE))
+                        .addComponent(resetar, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE))
                     .addGroup(jLayeredPane1Layout.createSequentialGroup()
-                        .addGap(96, 96, 96)
+                        .addGap(99, 99, 99)
                         .addComponent(jLabel2))
                     .addGroup(jLayeredPane1Layout.createSequentialGroup()
                         .addContainerGap()
@@ -280,14 +251,12 @@ public class Papalegua extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(alterarTempo, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(historico, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(desfazer, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
+                .addComponent(resetar, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 436, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(1570, 1570, 1570))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 493, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(1563, 1563, 1563))
             .addGroup(jLayeredPane1Layout.createSequentialGroup()
                 .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(mapa)
@@ -312,81 +281,67 @@ public class Papalegua extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void historicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_historicoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_historicoActionPerformed
-
-//Botao alterar tempo
+/*Esse metodo implementa o evento do botao alterar tempo.
+    Inicialmente ele confere se os vértices selecionados são adjacentes, caso sejam,
+    é exibida uma popup com uma mensagem que solicita ao usuario que o mesmo digite o 
+    novo tempo e salva em uma variável o tempo digitado pelo usuário. Se esse tempo 
+    não for nulo, ele altera o tempo na aresta entre aqueles dois vértices.
+    Caso os bairros não sejam adjacentes, exibe uma popup com uma mensagem de erro.*/
     private void alterarTempoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alterarTempoActionPerformed
-        Object[] obj = new String[500];
-        for(int i = 0; i<500; i++){
-            for(int j=i+1; j<50; j++){
-                //if(controller.isAresta(i, j)){
-                if(controller.isAresta(i, j)&&controller.isAresta(j, i)){
-                    obj[i]= controller.getBairros(i) + " -- " + controller.getBairros(j);
-                }
-            }
-        }
-        Object retorno = JOptionPane.showInputDialog(null, "Selecione um caminho:","Alteração do Tempo",JOptionPane.INFORMATION_MESSAGE, null,obj,obj[0]);
-        /*Object selectedValue = JOptionPane.showInputDialog(null,"Caminho:", "Selecione o caminho:",
-        JOptionPane.INFORMATION_MESSAGE, null, obj, obj[0]);	
-        Object[] opcoes = {"Um","Dois","Tres","Quatro"};
-Object res = JOptionPane.showInputDialog(null, "Escolha um item" , "Selecao de itens" ,
-				JOptionPane.PLAIN_MESSAGE , null ,opcoes,"");*/
+       if(controller.isAresta(origemDestino[0], origemDestino[1])){
+           String str =JOptionPane.showInputDialog("Digite o tempo:");
+           if(str!=null){
+                double valor =Double.parseDouble(str);
+                controller.alteraTempo(origemDestino[0], origemDestino[1], valor);
+           }
+       }
+       else{
+           JOptionPane.showMessageDialog(null, "Não é possivel alterar tempo, bairros não adjacentes! ",
+                                                "ERRO", JOptionPane.ERROR_MESSAGE);
+       }
     }//GEN-LAST:event_alterarTempoActionPerformed
 
-//botao edita preço
+/*Esse método implementa o evento do botão alterar preço.
+    Inicialmente ele exibe uma popup com uma mensagem requisitando ao usuario
+    o novo preço para o quilômetro rodado. Caso o valor digitado pelo usuario
+    não seja null, ele altera o preço quilometro do controller.*/
     private void alterarPrecoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alterarPrecoActionPerformed
-        double valor =Double.parseDouble(JOptionPane.showInputDialog("Digite o novo preço para o quilômetro rodado:"));
-        controller.setPrecoQuilometro(valor);
+        String str = JOptionPane.showInputDialog("Digite o novo preço para o quilômetro rodado:");
+        if(str!=null){
+            double valor =Double.parseDouble(str);
+            controller.setPrecoQuilometro(valor);
+        }
     }//GEN-LAST:event_alterarPrecoActionPerformed
-
+/*Esse método implementa o evento do botão ir.
+    Inicialmente faz-se uma chamada do método retornaMenorCaminho() do
+    controller enviando a origem e o destino como parametro e recebe um array
+    com o caminhoMinimo. Após isso, ele percorre o caminhoMinimo criando as
+    arestas com os indices correspondentes que está armazenada nesse array.
+    Após adicionar todas as arestas, ele exibe uma popup informando o valor da
+    distância, tempo do percurso e o valor da corrida.
+    */
     private void irActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_irActionPerformed
-        //corrigir pq ta meio bugado
-        
         int[] caminhoMinimo=controller.retonaMenorCaminho(origemDestino[0], origemDestino[1]);
-        
-        for(int i=0;i<vertices.length-1 && i<caminhoMinimo.length-1;i++){
-            //for(int j=i+1;j<caminhoMinimo.length;j++){
-                if(caminhoMinimo!=null){
-                    //if(caminhoMinimo[i]!=0){
-                        graph.insertEdge(null, null, "", vertices[caminhoMinimo[i+1]], vertices[caminhoMinimo[i]]);
-                    //}
-                }
-            //}
+        for(int i=0;i<vertices.length && i<caminhoMinimo.length-1;i++){
+            if(caminhoMinimo!=null){
+                arestas[i] = graph.insertEdge(null, null, "", vertices[caminhoMinimo[i+1]], vertices[caminhoMinimo[i]]);
+            }
         }
         JOptionPane.showMessageDialog(null,
                     "Distancia: " + controller.retornaValorDistancia(origemDestino[0], origemDestino[1])+ " Km" + "\n"+ 
                     "Tempo de percurso: "+ controller.retornaTempoTotal() + " min"+"\n" +
-                    "Valor da Corrida: R$ " + controller.retornaValorTotalCorrida(),"Resultado",JOptionPane.INFORMATION_MESSAGE );
+                    "Valor da Corrida: R$ " + controller.getValorTotalCorrida(),"Resultado",JOptionPane.INFORMATION_MESSAGE );
 
     }//GEN-LAST:event_irActionPerformed
-
-    private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
-        
-        
-    }//GEN-LAST:event_formMouseClicked
-
-    private void desfazerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_desfazerActionPerformed
-       
-        int[] caminhoMinimo=controller.retonaMenorCaminho(origemDestino[0], origemDestino[1]);
-        Object[] obj = new Object[caminhoMinimo.length];
-        for(int i=0;i<50;i++){
-            for(int j=i+1;j<50;j++){
-                if(caminhoMinimo!=null){
-                    //if(caminhoMinimo[i]!=0){
-                        obj = graph.getEdgesBetween(vertices[i], vertices[j]);
-                    //}
-                }
-            }
-        }
-        graph.resetEdges(obj);
-        graph.refresh();
-    }//GEN-LAST:event_desfazerActionPerformed
-
-//Botao alterar preço//Botao histórico
-
+/*Esse método implementa o evento do método de resetar.
+    Nesse método os valores de origem e destinos são "zerados" e as arestas são
+    removidas do grafo da tela.
+    */
+    private void resetarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetarActionPerformed
+        origemDestino[0] = Integer.MAX_VALUE;
+        origemDestino[1] = Integer.MAX_VALUE;
+        graph.cellsRemoved(arestas);
+    }//GEN-LAST:event_resetarActionPerformed
 
     public static void main(String args[]) {
         
@@ -422,18 +377,12 @@ Object res = JOptionPane.showInputDialog(null, "Escolha um item" , "Selecao de i
                 }
                 papalegua.setSize(1110, 730);
                 papalegua.setVisible(true);
-              
-               
-              
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton alterarPreco;
     private javax.swing.JButton alterarTempo;
-    private javax.swing.JButton desfazer;
-    private javax.swing.JButton historico;
     private javax.swing.JButton ir;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
@@ -442,5 +391,6 @@ Object res = JOptionPane.showInputDialog(null, "Escolha um item" , "Selecao de i
     private javax.swing.JList<String> jList1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel mapa;
+    private javax.swing.JButton resetar;
     // End of variables declaration//GEN-END:variables
 }
